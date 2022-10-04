@@ -1,0 +1,50 @@
+version: '3.5'
+services:
+  nginx: 
+    image: 'jc21/nginx-proxy-manager:${nginx_proxy_manager_version}'
+    restart: always
+    container_name: lemp-nginx
+    ports:
+      - '80:80'
+      - '81:81'
+      - '443:443'
+    volumes:
+      - ./lemp-nginx:/data
+    networks:
+      - lemp_networks
+
+  mysql:
+    image: mariadb:${mysql_version}
+    restart: unless-stopped
+    container_name: lemp-mysql
+    user: mysql
+    ports:
+      - '3306:3306'
+    cap_add:
+      - SYS_NICE
+    env_file:
+      - .env
+    environment:
+      - MYSQL_ROOT_PASSWORD=${mysql_root_password}
+      - MYSQL_USER=${mysql_user}
+      - MYSQL_PASSWORD=${mysql_password}
+    volumes:
+      - ./lemp-mysql:/var/lib/mysql/:rw
+    networks:
+      - lemp_networks
+
+  phpmyadmin:
+    image: phpmyadmin:${phpmyadmin_version}
+    restart: always
+    container_name: lemp-pma
+    ports:
+      - 8080:80
+    environment:
+      - PMA_ARBITRARY=1
+    networks:
+      - lemp_networks
+
+networks:
+  lemp_networks:
+    driver: bridge
+    name: server_lemp_networks

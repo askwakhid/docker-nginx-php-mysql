@@ -1,0 +1,7 @@
+# Global
+.*.swp
+.DS_Store
+.vscode/
+
+# Apps
+lemp-*
